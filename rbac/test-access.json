@@ -1,0 +1,26 @@
+[
+    {
+      "principalId": "00000000-0000-0000-0000-000000000001",
+      "roleDefinitionId": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
+      "scope": "[resourceGroup().id]",
+      "description": "Reader access to test resources for developers"
+    },
+    {
+      "principalId": "00000000-0000-0000-0000-000000000001",
+      "roleDefinitionId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "scope": "[resourceGroup().id]",
+      "description": "Contributor access to test resources for QA team"
+    },
+    {
+      "principalId": "00000000-0000-0000-0000-000000000003",
+      "roleDefinitionId": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+      "scope": "[resourceGroup().id]",
+      "description": "Owner access to test resources for DevOps team"
+    },
+    {
+      "principalId": "00000000-0000-0000-0000-000000000004",
+      "roleDefinitionId": "39bc4728-0917-49c7-9d2c-d95423bc2eb4",
+      "scope": "[resourceGroup().id]",
+      "description": "Security Reader access to test resources for Security team"
+    }
+  ]

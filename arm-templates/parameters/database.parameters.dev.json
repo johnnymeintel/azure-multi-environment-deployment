@@ -1,0 +1,29 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlServerName": {
+            "value": "kenosis-sql-dev"
+        },
+        "sqlDatabaseName": {
+            "value": "kenosisdb-dev"
+        },
+        "sqlDatabaseSku": {
+            "value": "Basic"
+        },
+        "administratorLogin": {
+            "value": "kenosis_admin"
+        },
+        "administratorLoginPassword": {
+            "value": "YourPassword123!"
+        },
+        "tags": {
+            "value": {
+                "environment": "development",
+                "project": "Kenosis",
+                "owner": "Quantum Necromancer",
+                "costCenter": "IT-1234"
+            }
+        }
+    }
+}

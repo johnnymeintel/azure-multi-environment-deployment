@@ -1,0 +1,162 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  // Specifies the schema version for this ARM template.
+  "contentVersion": "1.0.0.0",
+  // Defines the version of this template.
+
+  // --- Parameters Section ---
+  // Defines the input parameters that can be customized during deployment.
+  "parameters": {
+    "sqlServerName": {
+      "type": "string",
+      // Specifies that the 'sqlServerName' parameter expects a string value.
+      "metadata": {
+        "description": "Name of the SQL Server"
+        // Provides a description for the 'sqlServerName' parameter.
+      }
+    },
+    "sqlDatabaseName": {
+      "type": "string",
+      // Specifies that the 'sqlDatabaseName' parameter expects a string value.
+      "metadata": {
+        "description": "Name of the SQL Database"
+        // Provides a description for the 'sqlDatabaseName' parameter.
+      }
+    },
+    "sqlDatabaseSku": {
+      "type": "string",
+      // Specifies that the 'sqlDatabaseSku' parameter expects a string value.
+      "defaultValue": "Basic",
+      // Sets the default value of the 'sqlDatabaseSku' parameter to "Basic" (lowest cost tier).
+      "metadata": {
+        "description": "SKU of the SQL Database"
+        // Provides a description for the 'sqlDatabaseSku' parameter.
+      }
+    },
+    "administratorLogin": {
+      "type": "string",
+      // Specifies that the 'administratorLogin' parameter expects a string value.
+      "metadata": {
+        "description": "SQL Server administrator login"
+        // Provides a description for the 'administratorLogin' parameter.
+      }
+    },
+    "administratorLoginPassword": {
+      "type": "securestring",
+      // Specifies that the 'administratorLoginPassword' parameter expects a string value but will be handled securely.
+      "metadata": {
+        "description": "SQL Server administrator password"
+        // Provides a description for the 'administratorLoginPassword' parameter.
+      }
+    },
+    "location": {
+      "type": "string",
+      // Specifies that the 'location' parameter expects a string value.
+      "defaultValue": "[resourceGroup().location]",
+      // Sets the default value of the 'location' parameter to the location of the resource group.
+      "metadata": {
+        "description": "Location for the SQL Server and Database"
+        // Provides a description for the 'location' parameter.
+      }
+    },
+    "tags": {
+      "type": "object",
+      // Specifies that the 'tags' parameter expects a JSON object.
+      "defaultValue": {},
+      // Sets the default value of the 'tags' parameter to an empty JSON object.
+      "metadata": {
+        "description": "Resource tags"
+        // Provides a description for the 'tags' parameter.
+      }
+    }
+  },
+
+  // --- Variables Section ---
+  // Defines reusable values within the template (currently empty in this template).
+  "variables": {
+  },
+
+  // --- Resources Section ---
+  // Defines the Azure resources to be deployed or updated.
+  "resources": [
+    {
+      "type": "Microsoft.Sql/servers",
+      // Specifies the resource type as SQL Server.
+      "apiVersion": "2021-05-01-preview",
+      // Specifies the API version to use for the 'Microsoft.Sql/servers' resource provider.
+      "name": "[parameters('sqlServerName')]",
+      // Sets the name of the SQL Server to the value provided in the 'sqlServerName' parameter.
+      "location": "[parameters('location')]",
+      // Sets the location of the SQL Server to the value provided in the 'location' parameter.
+      "tags": "[parameters('tags')]",
+      // Applies the tags provided in the 'tags' parameter to the SQL Server.
+      "properties": {
+        "administratorLogin": "[parameters('administratorLogin')]",
+        // Sets the administrator login for the SQL Server.
+        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+        // Sets the administrator password for the SQL Server (stored securely).
+        "version": "12.0",
+        // Specifies the SQL Server version to deploy.
+        "publicNetworkAccess": "Enabled",
+        // Enables public network access to the SQL Server.
+        "minimalTlsVersion": "1.2"
+        // Sets the minimum TLS version to 1.2 for secure connections.
+      },
+      "resources": [
+        {
+          "type": "databases",
+          // Specifies the resource type as a SQL Database (nested resource).
+          "apiVersion": "2021-05-01-preview",
+          // Specifies the API version to use for the 'Microsoft.Sql/servers/databases' resource provider.
+          "name": "[parameters('sqlDatabaseName')]",
+          // Sets the name of the SQL Database to the value provided in the 'sqlDatabaseName' parameter.
+          "location": "[parameters('location')]",
+          // Sets the location of the SQL Database to the value provided in the 'location' parameter.
+          "tags": "[parameters('tags')]",
+          // Applies the tags provided in the 'tags' parameter to the SQL Database.
+          "sku": {
+            "name": "[parameters('sqlDatabaseSku')]"
+            // Sets the SKU of the SQL Database using the 'sqlDatabaseSku' parameter.
+          },
+          "properties": {
+            "collation": "SQL_Latin1_General_CP1_CI_AS"
+            // Sets the collation for the SQL Database.
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+            // Specifies that this database depends on the SQL Server being created first.
+          ]
+        },
+        {
+          "type": "firewallRules",
+          // Specifies the resource type as a firewall rule (nested resource).
+          "apiVersion": "2021-05-01-preview",
+          // Specifies the API version to use for the 'Microsoft.Sql/servers/firewallRules' resource provider.
+          "name": "AllowAzureServices",
+          // Sets the name of the firewall rule.
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            // Sets the start IP address to 0.0.0.0, which represents Azure services.
+            "endIpAddress": "0.0.0.0"
+            // Sets the end IP address to 0.0.0.0, which represents Azure services.
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+            // Specifies that this firewall rule depends on the SQL Server being created first.
+          ]
+        }
+      ]
+    }
+  ],
+
+  // --- Outputs Section ---
+  // Defines values that are returned after the deployment is complete.
+  "outputs": {
+    "sqlServerFqdn": {
+      "type": "string",
+      // Specifies that the 'sqlServerFqdn' output will be a string value.
+      "value": "[reference(resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))).fullyQualifiedDomainName]"
+      // Retrieves and outputs the fully qualified domain name (FQDN) of the deployed SQL Server.
+    }
+  }
+}

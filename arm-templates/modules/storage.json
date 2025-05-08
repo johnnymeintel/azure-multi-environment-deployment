@@ -1,0 +1,108 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  // Specifies the schema version for this ARM template.
+  "contentVersion": "1.0.0.0",
+  // Defines the version of this template.
+
+  // --- Parameters Section ---
+  // Defines the input parameters that can be customized during deployment.
+  "parameters": {
+    "storageAccountName": {
+      "type": "string",
+      // Specifies that the 'storageAccountName' parameter expects a string value.
+      "metadata": {
+        "description": "Name of the storage account"
+        // Provides a description for the 'storageAccountName' parameter.
+      }
+    },
+    "storageAccountSku": {
+      "type": "string",
+      // Specifies that the 'storageAccountSku' parameter expects a string value.
+      "defaultValue": "Standard_LRS",
+      // Sets the default value of the 'storageAccountSku' parameter to "Standard_LRS" (Standard Locally Redundant Storage).
+      "metadata": {
+        "description": "SKU of the storage account"
+        // Provides a description for the 'storageAccountSku' parameter.
+      }
+    },
+    "location": {
+      "type": "string",
+      // Specifies that the 'location' parameter expects a string value.
+      "defaultValue": "[resourceGroup().location]",
+      // Sets the default value of the 'location' parameter to the location of the resource group where this template is deployed.
+      "metadata": {
+        "description": "Location for the storage account"
+        // Provides a description for the 'location' parameter.
+      }
+    },
+    "tags": {
+      "type": "object",
+      // Specifies that the 'tags' parameter expects a JSON object.
+      "defaultValue": {},
+      // Sets the default value of the 'tags' parameter to an empty JSON object.
+      "metadata": {
+        "description": "Resource tags"
+        // Provides a description for the 'tags' parameter.
+      }
+    }
+  },
+
+  // --- Variables Section ---
+  // Defines reusable values within the template (currently empty in this template).
+  "variables": {
+  },
+
+  // --- Resources Section ---
+  // Defines the Azure resources to be deployed or updated.
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      // Specifies the resource type as a storage account.
+      "apiVersion": "2021-06-01",
+      // Specifies the API version to use for the 'Microsoft.Storage/storageAccounts' resource provider.
+      "name": "[parameters('storageAccountName')]",
+      // Sets the name of the storage account to the value provided in the 'storageAccountName' parameter.
+      "location": "[parameters('location')]",
+      // Sets the location of the storage account to the value provided in the 'location' parameter.
+      "tags": "[parameters('tags')]",
+      // Applies the tags provided in the 'tags' parameter to the storage account.
+      "sku": {
+        "name": "[parameters('storageAccountSku')]"
+        // Sets the SKU of the storage account using the 'storageAccountSku' parameter.
+      },
+      "kind": "StorageV2",
+      // Specifies the kind of storage account as 'StorageV2' (General Purpose v2).
+      "properties": {
+        "supportsHttpsTrafficOnly": true,
+        // Enforces HTTPS traffic only for the storage account.
+        "minimumTlsVersion": "TLS1_2",
+        // Sets the minimum TLS version to 1.2 for secure connections.
+        "allowBlobPublicAccess": false,
+        // Disallows public access to blobs within the storage account.
+        "networkAcls": {
+          "bypass": "AzureServices",
+          // Allows Azure services to bypass network ACLs.
+          "defaultAction": "Allow"
+          // Sets the default action for network ACLs to 'Allow'.  Consider 'Deny' for more secure configurations and then explicitly allow specific networks.
+        }
+      }
+    }
+  ],
+
+  // --- Outputs Section ---
+  // Defines values that are returned after the deployment is complete.
+  "outputs": {
+    "storageAccountName": {
+      "type": "string",
+      // Specifies that the 'storageAccountName' output will be a string value.
+      "value": "[parameters('storageAccountName')]"
+      // Outputs the name of the deployed storage account.
+    },
+    "storageAccountId": {
+      "type": "string",
+      // Specifies that the 'storageAccountId' output will be a string value.
+      "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      // Retrieves and outputs the resource ID of the deployed storage account.
+    }
+  }
+}

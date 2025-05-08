@@ -1,0 +1,132 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  // Specifies the schema version for this ARM template.
+  "contentVersion": "1.0.0.0",
+  // Defines the version of this template.
+
+  // --- Parameters Section ---
+  // Defines the input parameters that can be customized during deployment.
+  "parameters": {
+    "appName": {
+      "type": "string",
+      // Specifies that the 'appName' parameter expects a string value.
+      "metadata": {
+        "description": "Name of the App Service"
+        // Provides a description for the 'appName' parameter.
+      }
+    },
+    "appServicePlanName": {
+      "type": "string",
+      // Specifies that the 'appServicePlanName' parameter expects a string value.
+      "metadata": {
+        "description": "Name of the App Service Plan"
+        // Provides a description for the 'appServicePlanName' parameter.
+      }
+    },
+    "appServicePlanSku": {
+      "type": "string",
+      // Specifies that the 'appServicePlanSku' parameter expects a string value.
+      "defaultValue": "F1",
+      // Sets the default value of the 'appServicePlanSku' parameter to "F1" (Free tier, economical choice).
+      "metadata": {
+        "description": "SKU of the App Service Plan"
+        // Provides a description for the 'appServicePlanSku' parameter.
+      }
+    },
+    "location": {
+      "type": "string",
+      // Specifies that the 'location' parameter expects a string value.
+      "defaultValue": "[resourceGroup().location]",
+      // Sets the default value of the 'location' parameter to the location of the resource group.
+      "metadata": {
+        "description": "Location for the App Service"
+        // Provides a description for the 'location' parameter.
+      }
+    },
+    "tags": {
+      "type": "object",
+      // Specifies that the 'tags' parameter expects a JSON object.
+      "defaultValue": {},
+      // Sets the default value of the 'tags' parameter to an empty JSON object.
+      "metadata": {
+        "description": "Resource tags"
+        // Provides a description for the 'tags' parameter.
+      }
+    }
+  },
+
+  // --- Variables Section ---
+  // Defines reusable values within the template (currently empty in this template).
+  "variables": {
+  },
+
+  // --- Resources Section ---
+  // Defines the Azure resources to be deployed or updated.
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      // Specifies the resource type as an App Service Plan (serverFarm).
+      "apiVersion": "2021-02-01",
+      // Specifies the API version to use for the 'Microsoft.Web/serverfarms' resource provider.
+      "name": "[parameters('appServicePlanName')]",
+      // Sets the name of the App Service Plan to the value provided in the 'appServicePlanName' parameter.
+      "location": "[parameters('location')]",
+      // Sets the location of the App Service Plan to the value provided in the 'location' parameter.
+      "tags": "[parameters('tags')]",
+      // Applies the tags provided in the 'tags' parameter to the App Service Plan.
+      "sku": {
+        "name": "[parameters('appServicePlanSku')]"
+        // Sets the SKU (pricing tier) of the App Service Plan using the 'appServicePlanSku' parameter.
+      },
+      "kind": "app",
+      // Specifies the kind of App Service Plan as a standard Windows app plan.
+      "properties": {
+        "reserved": false
+        // Indicates this is not a Linux app service plan (false = Windows).
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      // Specifies the resource type as an App Service (site).
+      "apiVersion": "2021-02-01",
+      // Specifies the API version to use for the 'Microsoft.Web/sites' resource provider.
+      "name": "[parameters('appName')]",
+      // Sets the name of the App Service to the value provided in the 'appName' parameter.
+      "location": "[parameters('location')]",
+      // Sets the location of the App Service to the value provided in the 'location' parameter.
+      "tags": "[parameters('tags')]",
+      // Applies the tags provided in the 'tags' parameter to the App Service.
+      "kind": "app",
+      // Specifies the kind of App Service as a standard web app.
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        // Links this App Service to the specified App Service Plan.
+        "httpsOnly": true,
+        // Enforces HTTPS-only access to the App Service.
+        "siteConfig": {
+          "minTlsVersion": "1.2",
+          // Sets the minimum TLS version to 1.2 for secure connections.
+          "ftpsState": "Disabled",
+          // Disables FTP/FTPS access to the App Service for improved security.
+          "http20Enabled": true
+          // Enables HTTP/2.0 protocol for improved performance.
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+        // Specifies that this App Service depends on the App Service Plan being created first.
+      ]
+    }
+  ],
+
+  // --- Outputs Section ---
+  // Defines values that are returned after the deployment is complete.
+  "outputs": {
+    "appServiceUrl": {
+      "type": "string",
+      // Specifies that the 'appServiceUrl' output will be a string value.
+      "value": "[concat('https://', reference(resourceId('Microsoft.Web/sites', parameters('appName'))).defaultHostName)]"
+      // Retrieves and outputs the default URL of the deployed App Service.
+    }
+  }
+}

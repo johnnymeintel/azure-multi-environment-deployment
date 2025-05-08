@@ -1,0 +1,106 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  // Specifies the schema version for this ARM template.
+  "contentVersion": "1.0.0.0",
+  // Defines the version of this template.
+
+  // --- Parameters Section ---
+  // Defines the input parameters that can be customized during deployment.
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      // Specifies that the 'vnetName' parameter expects a string value.
+      "metadata": {
+        "description": "Name of the virtual network"
+        // Provides a description for the 'vnetName' parameter.
+      }
+    },
+    "location": {
+      "type": "string",
+      // Specifies that the 'location' parameter expects a string value.
+      "defaultValue": "[resourceGroup().location]",
+      // Sets the default value of the 'location' parameter to the location of the resource group where this template is deployed.
+      "metadata": {
+        "description": "Location for the virtual network"
+        // Provides a description for the 'location' parameter.
+      }
+    },
+    "tags": {
+      "type": "object",
+      // Specifies that the 'tags' parameter expects a JSON object.
+      "defaultValue": {},
+      // Sets the default value of the 'tags' parameter to an empty JSON object.
+      "metadata": {
+        "description": "Resource tags"
+        // Provides a description for the 'tags' parameter.
+      }
+    }
+  },
+
+  // --- Variables Section ---
+  // Defines reusable values within the template.
+  "variables": {
+    "addressPrefix": "10.0.0.0/16",
+    // Defines a variable 'addressPrefix' with the value "10.0.0.0/16", representing the address space for the virtual network.
+    "subnetName": "default",
+    // Defines a variable 'subnetName' with the value "default", representing the name of the subnet.
+    "subnetPrefix": "10.0.0.0/24"
+    // Defines a variable 'subnetPrefix' with the value "10.0.0.0/24", representing the address prefix for the subnet.
+  },
+
+  // --- Resources Section ---
+  // Defines the Azure resources to be deployed or updated.
+  "resources": [
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      // Specifies the resource type as a virtual network.
+      "apiVersion": "2021-02-01",
+      // Specifies the API version to use for the 'Microsoft.Network/virtualNetworks' resource provider.
+      "name": "[parameters('vnetName')]",
+      // Sets the name of the virtual network to the value provided in the 'vnetName' parameter.
+      "location": "[parameters('location')]",
+      // Sets the location of the virtual network to the value provided in the 'location' parameter.
+      "tags": "[parameters('tags')]",
+      // Applies the tags provided in the 'tags' parameter to the virtual network.
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+            // Defines the address prefixes for the virtual network's address space using the 'addressPrefix' variable.
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            // Sets the name of the subnet using the 'subnetName' variable.
+            "properties": {
+              "addressPrefix": "[variables('subnetPrefix')]",
+              // Defines the address prefix for the subnet using the 'subnetPrefix' variable.
+              "privateEndpointNetworkPolicies": "Enabled",
+              // Enables network policies for private endpoints on this subnet.
+              "privateLinkServiceNetworkPolicies": "Enabled"
+              // Enables network policies for private link services on this subnet.
+            }
+          }
+        ]
+      }
+    }
+  ],
+
+  // --- Outputs Section ---
+  // Defines values that are returned after the deployment is complete.
+  "outputs": {
+    "vnetId": {
+      "type": "string",
+      // Specifies that the 'vnetId' output will be a string value.
+      "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+      // Retrieves and outputs the resource ID of the deployed virtual network.
+    },
+    "subnetId": {
+      "type": "string",
+      // Specifies that the 'subnetId' output will be a string value.
+      "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('subnetName'))]"
+      // Retrieves and outputs the resource ID of the 'default' subnet within the deployed virtual network.
+    }
+  }
+}

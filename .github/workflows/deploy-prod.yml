@@ -1,0 +1,49 @@
+name: Deploy to Production
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: Validate ARM Templates
+        uses: azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          resourceGroupName: rg-multi-env-prod
+          template: ./arm-templates/main.json
+          parameters: ./arm-templates/parameters.prod.json
+          deploymentMode: Validate
+          
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      - name: Deploy ARM Templates
+        uses: azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          resourceGroupName: rg-multi-env-prod
+          template: ./arm-templates/main.json
+          parameters: ./arm-templates/parameters.prod.json
+          deploymentMode: Incremental

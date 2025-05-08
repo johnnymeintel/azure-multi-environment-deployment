@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appName": {
+            "value": "kenosis-app-prod"
+        },
+        "appServicePlanName": {
+            "value": "kenosis-plan-prod"
+        },
+        "appServicePlanSku": {
+            "value": "F1"
+        },
+        "location": {
+            "value": "westus"
+        },
+        "tags": {
+            "value": {
+                "environment": "production",
+                "project": "Kenosis",
+                "owner": "Quantum Necromancer",
+                "costCenter": "IT-1234"
+            }
+        }
+    }
+}
