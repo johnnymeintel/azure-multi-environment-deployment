@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "roleAssignments": {
+      "value": [
+        {
+          "principalId": "00000000-0000-0000-0000-000000000001",
+          "roleDefinitionId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
+          "scope": "[resourceGroup().id]",
+          "description": "Full contributor access to development resources for developers"
+        },
+        {
+          "principalId": "00000000-0000-0000-0000-000000000002",
+          "roleDefinitionId": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
+          "scope": "[resourceGroup().id]",
+          "description": "Reader access to development resources for QA team"
+        },
+        {
+          "principalId": "00000000-0000-0000-0000-000000000003",
+          "roleDefinitionId": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
+          "scope": "[resourceGroup().id]",
+          "description": "Owner access to development resources for DevOps team"
+        }
+      ]
+    },
+    "resourceSpecificRoles": {
+      "value": [
+        {
+          "principalId": "00000000-0000-0000-0000-000000000001",
+          "roleDefinitionId": "093c2cf4-f19c-4ec2-ab0c-4676dbb85ff7",
+          "scope": "[resourceId('Microsoft.Sql/servers/databases', 'kenosis-sql-dev', 'kenosisdb-dev')]",
+          "description": "Database contributor access for developers in dev environment"
+        }
+      ]
+    }
+  }
+}
