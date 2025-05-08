@@ -16,11 +16,11 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/YourUsername/YourRepo/main/network.json",
+          "uri": "https://raw.githubusercontent.com/johnnymeintel/azure-multi-environment-deployment/main/arm-templates/modules/network.json",
           "contentVersion": "1.0.0.0"
         },
         "parametersLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/YourUsername/YourRepo/main/network.parameters.', parameters('environment'), '.json')]",
+          "uri": "[concat('https://raw.githubusercontent.com/johnnymeintel/azure-multi-environment-deployment/main/arm-templates/parameters/network.parameters.', parameters('environment'), '.json')]",
           "contentVersion": "1.0.0.0"
         }
       }
@@ -32,11 +32,11 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/YourUsername/YourRepo/main/storage.json",
+          "uri": "https://raw.githubusercontent.com/johnnymeintel/azure-multi-environment-deployment/main/arm-templates/modules/storage.json",
           "contentVersion": "1.0.0.0"
         },
         "parametersLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/YourUsername/YourRepo/main/storage.parameters.', parameters('environment'), '.json')]",
+          "uri": "[concat('https://raw.githubusercontent.com/johnnymeintel/azure-multi-environment-deployment/main/arm-templates/parameters/storage.parameters.', parameters('environment'), '.json')]",
           "contentVersion": "1.0.0.0"
         }
       }
@@ -48,11 +48,11 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/YourUsername/YourRepo/main/database.json",
+          "uri": "https://raw.githubusercontent.com/johnnymeintel/azure-multi-environment-deployment/main/arm-templates/modules/database.json",
           "contentVersion": "1.0.0.0"
         },
         "parametersLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/YourUsername/YourRepo/main/database.parameters.', parameters('environment'), '.json')]",
+          "uri": "[concat('https://raw.githubusercontent.com/johnnymeintel/azure-multi-environment-deployment/main/arm-templates/parameters/database.parameters.', parameters('environment'), '.json')]",
           "contentVersion": "1.0.0.0"
         }
       }
@@ -64,11 +64,11 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/YourUsername/YourRepo/main/appservice.json",
+          "uri": "https://raw.githubusercontent.com/johnnymeintel/azure-multi-environment-deployment/main/arm-templates/modules/appservice.json",
           "contentVersion": "1.0.0.0"
         },
         "parametersLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/YourUsername/YourRepo/main/appservice.parameters.', parameters('environment'), '.json')]",
+          "uri": "[concat('https://raw.githubusercontent.com/johnnymeintel/azure-multi-environment-deployment/main/arm-templates/parameters/appservice.parameters.', parameters('environment'), '.json')]",
           "contentVersion": "1.0.0.0"
         }
       },
